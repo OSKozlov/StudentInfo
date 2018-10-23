@@ -1,8 +1,12 @@
 package studentlog.views;
 
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
@@ -16,6 +20,7 @@ import org.eclipse.ui.part.ViewPart;
 import studentlog.commands.OpenProfileHandler;
 import studentlog.dnd.MyDragListener;
 import studentlog.model.Folder;
+import studentlog.model.ITreeItem;
 import studentlog.model.Observer;
 import studentlog.model.Root;
 import studentlog.model.StudentsEntry;
@@ -23,6 +28,7 @@ import studentlog.model.StudentsGroup;
 import studentlog.model.TreeModel;
 import studentlog.tree_providers.CustomTreeContentProvider;
 import studentlog.tree_providers.CustomTreeLabelProvider;
+import studentlog.tree_providers.TreeLabelProvider;
 
 public class StudentsView extends ViewPart implements Observer {
 
@@ -80,6 +86,7 @@ public class StudentsView extends ViewPart implements Observer {
 			}
 		});
 
+		enableEditing(treeViewer);
 	}
 
 	public TreeViewer getTreeViewer() {
@@ -96,4 +103,45 @@ public class StudentsView extends ViewPart implements Observer {
 	public void setFocus() {
 		// TODO Auto-generated method stub
 	}
+	
+    private void enableEditing(TreeViewer treeViewer) {
+        final TreeViewerColumn column = new TreeViewerColumn(treeViewer, SWT.NONE);
+        column.getColumn()
+              .setWidth(250);
+        column.setLabelProvider(new TreeLabelProvider());
+        final TreeViewer finalTreeViewer = treeViewer;
+        final TextCellEditor cellEditor = new TextCellEditor(treeViewer.getTree());
+        column.setEditingSupport(new EditingSupport(treeViewer) {
+
+            @Override
+            protected void setValue(Object element, Object value) {
+                System.out.println("### value: " + value);
+                if (element instanceof ITreeItem) {
+                    String name = ((ITreeItem) element).getName();
+                    System.out.println("### name: " + name);
+                    finalTreeViewer.update(name, null);
+                }
+            }
+
+            @Override
+            protected Object getValue(Object element) {
+                String name = null;
+                if (element instanceof ITreeItem) {
+                    name = ((ITreeItem) element).getName();
+                    System.out.println("### name: " + name);
+                }
+                return name;
+            }
+
+            @Override
+            protected CellEditor getCellEditor(Object element) {
+                return cellEditor;
+            }
+
+            @Override
+            protected boolean canEdit(Object element) {
+                return true;
+            }
+        });
+    }
 }
