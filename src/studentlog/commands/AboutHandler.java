@@ -6,6 +6,9 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.handlers.HandlerUtil;
 
+import studentlog.test.MyModularDialog;
+import studentlog.test.MyNonModularDialog;
+
 
 public class AboutHandler extends AbstractHandler {
 
@@ -14,14 +17,19 @@ public class AboutHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		
-		String message = "This program allows you to keep a log of homework."
+	    MyModularDialog dialog = new MyModularDialog(HandlerUtil.getActiveWorkbenchWindow(event).getShell());
+	    dialog.create();
+	    dialog.open();
+	    
+	    
+/*		String message = "This program allows you to keep a log of homework."
 				+ " Provides the ability to add, delete students entry,"
 				+ " drug it from the tree and drop to the editor area ."
 				+ " And also it is possible to save the edited log to a file.";
 		
 		MessageDialog dialog = new MessageDialog(HandlerUtil.getActiveWorkbenchWindow(event).getShell(), "About the program", null,
 			    message, MessageDialog.INFORMATION, new String[] { "About"}, 0);
-			dialog.open();
+			dialog.open();*/
 		return null;
 	}
 }
